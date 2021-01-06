@@ -3,7 +3,97 @@
 from PyQt5.QtWidgets import QDialog, QApplication, QMessageBox, QTableWidget, QTableWidgetItem
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 import sqlite3
-
+###################
+#/////////////////#
+class all_librarians (QtWidgets.QDialog):
+     def __init__(self):
+        super(all_librarians,self).__init__()
+        uic.loadUi('all_librarian.ui',self)
+        self.ExitPushButton.clicked.connect(self.close)
+        self.list_all_librarian.setColumnWidth(0,300)
+        self.list_all_librarian.setColumnWidth(1,400)
+        self.list_all_librarian.setColumnWidth(2,200)
+        self.list_all_librarian.setColumnWidth(3,200)
+        self.list_all_librarian.setColumnWidth(4,200)
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        Member = cur.execute(f"select  * from TLibrarian")
+        self.list_all_librarian.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.list_all_librarian.insertRow(row)
+            for column, item in enumerate(form):
+                self.list_all_librarian.setItem(row, column,QTableWidgetItem(str(item)))
+        cur.close
+###################
+#/////////////////#
+class all_members (QtWidgets.QDialog):
+     def __init__(self):
+        super(all_members,self).__init__()
+        uic.loadUi('all_member.ui',self)
+        self.ExitPushButton.clicked.connect(self.close)
+        self.list_all_member.setColumnWidth(0,300)
+        self.list_all_member.setColumnWidth(1,400)
+        self.list_all_member.setColumnWidth(2,200)
+        self.list_all_member.setColumnWidth(3,200)
+        self.list_all_member.setColumnWidth(4,200)
+        self.list_all_member.setColumnWidth(5,200)
+        self.list_all_member.setColumnWidth(6,200)
+        self.list_all_member.setColumnWidth(7,200)
+        self.list_all_member.setColumnWidth(8,200)
+        self.list_all_member.setColumnWidth(9,200)
+        self.list_all_member.setColumnWidth(10,150)
+        self.list_all_member.setColumnWidth(11,100)
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        Member = cur.execute(f"select  * from TMembership")
+        self.list_all_member.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.list_all_member.insertRow(row)
+            for column, item in enumerate(form):
+                self.list_all_member.setItem(row, column,QTableWidgetItem(str(item)))
+        cur.close
+###################
+#/////////////////#
+class all_authors (QtWidgets.QDialog):
+     def __init__(self):
+        super(all_authors,self).__init__()
+        uic.loadUi('all_author.ui',self)
+        self.ExitPushButton.clicked.connect(self.close)
+        self.list_all_author.setColumnWidth(0,300)
+        self.list_all_author.setColumnWidth(1,400)
+        self.list_all_author.setColumnWidth(2,200)
+        self.list_all_author.setColumnWidth(3,200)
+        self.list_all_author.setColumnWidth(4,100)
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        Member = cur.execute(f"select  * from TAuthor")
+        self.list_all_author.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.list_all_author.insertRow(row)
+            for column, item in enumerate(form):
+                self.list_all_author.setItem(row, column,QTableWidgetItem(str(item)))
+        cur.close
+###################
+#/////////////////#
+class all_authors (QtWidgets.QDialog):
+     def __init__(self):
+        super(all_authors,self).__init__()
+        uic.loadUi('all_author.ui',self)
+        self.ExitPushButton.clicked.connect(self.close)
+        self.list_all_author.setColumnWidth(0,300)
+        self.list_all_author.setColumnWidth(1,400)
+        self.list_all_author.setColumnWidth(2,200)
+        self.list_all_author.setColumnWidth(3,200)
+        self.list_all_author.setColumnWidth(4,100)
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        Member = cur.execute(f"select  * from TAuthor")
+        self.list_all_author.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.list_all_author.insertRow(row)
+            for column, item in enumerate(form):
+                self.list_all_author.setItem(row, column,QTableWidgetItem(str(item)))
+        cur.close
 ###################
 #/////////////////#
 class widget(QtWidgets.QWidget):
@@ -31,7 +121,6 @@ class all_books(QtWidgets.QDialog):
         super(all_books,self).__init__()
         uic.loadUi('all_books.ui',self)
         self.ExitPushButton.clicked.connect(self.close)
-        self.list_all_book.setEditTriggers(QTableWidget.NoEditTriggers)
         self.list_all_book.setColumnWidth(0,400)
         self.list_all_book.setColumnWidth(1,200)
         self.list_all_book.setColumnWidth(2,200)
@@ -265,15 +354,31 @@ class main_form(QtWidgets.QMainWindow):
         self.actionBook_Borrow.triggered.connect(self.show_borrow_books)
         self.actionBooksDelete.triggered.connect(self.show_delete_books)
         self.actionList_All_Books.triggered.connect(self.show_all_books)
+        self.actionList_All_Authors.triggered.connect(self.show_all_author)
+        self.actionList_All_Members.triggered.connect(self.show_all_member)
+        self.actionList_All_Librarians.triggered.connect(self.show_all_librarian)
 
+    def show_all_librarian(self):
+        self.librarian = all_librarians()
+        self.librarian.setModal(True)
+        self.librarian.show()
         self.actionExit.triggered.connect(self.close)
-   
+    def show_all_member(self):
+        self.member = all_members()
+        self.member.setModal(True)
+        self.member.show()
+    
+
+    def show_all_author(self):
+        self.author = all_authors()
+        self.author.setModal(True)
+        self.author.show()
+    
+    
     def show_all_books(self):
         self.all = all_books()
         self.all.setModal(True)
         self.all.show()
-
-
 
 
     def show_delete_books(self):
@@ -298,10 +403,6 @@ class main_form(QtWidgets.QMainWindow):
         self.an.setModal(True)
         self.an.show()
 
-
-
-
-
     def show_add_books_author(self):
         self.Au = add_books_author()
         self.Au.setModal(True)
@@ -313,20 +414,7 @@ class main_form(QtWidgets.QMainWindow):
         self.A =add_books()
         self.A.setModal(True)
         self.A.show()
-
-
-        
-
-        
-        
-        #this below Line for pass login window and  this software without userName and password 
-        # Because I Can't find the Codes. 
-        # self.LoginPushButton.clicked.connect(self.close)
-        #Just Clicked on Login Push  Button...
-        # self.ExitPushButton.clicked.connect(self.close)   
-    # def show_main_form(self):
-    #     self.w = main_form()
-    #     self.w.show()        
+       
 ####################
 #//////////////////#
 class add_books(QtWidgets.QDialog):
