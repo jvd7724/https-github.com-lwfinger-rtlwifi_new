@@ -3,6 +3,113 @@
 from PyQt5.QtWidgets import QDialog, QApplication, QMessageBox, QTableWidget, QTableWidgetItem
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 import sqlite3
+class edit_members(QtWidgets.QDialog):
+    def __init__(self):
+        super(edit_members,self).__init__()
+        uic.loadUi('edit_members.ui',self)
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        self.list_all_member.setColumnWidth(0,400)
+        self.list_all_member.setColumnWidth(1,200)
+        self.list_all_member.setColumnWidth(2,200)
+        self.list_all_member.setColumnWidth(3,200)
+        self.list_all_member.setColumnWidth(4,200)
+        self.list_all_member.setColumnWidth(5,200)
+        self.list_all_member.setColumnWidth(6,200)
+        self.list_all_member.setColumnWidth(7,200)
+        self.list_all_member.setColumnWidth(8,200)
+        self.list_all_member.setColumnWidth(9,200)
+        self.list_all_member.setColumnWidth(10,100)
+        self.list_all_member.setColumnWidth(11,100)
+        book = cur.execute(f"select  * from TMembership")
+        self.list_all_member.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.list_all_member.insertRow(row)
+            for column, item in enumerate(form):
+                self.list_all_member.setItem(row, column, QTableWidgetItem(str(item)))
+        cur.close
+        self.ExitPushButton.clicked.connect(self.close)
+        self.SavePushButton.clicked.connect(self.edit_member)
+        # self.refreshPushButton.clicked.connect(self.refresh_table)
+    # def refresh_table(self):
+    def edit_member(self):
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        fn = self.FirstNameLineEdit.text()
+        ln = self.LastNameLineEdit.text()
+        nc = self.NationalCodeLineEdit.text()
+        ri = self.RegisteryDateLineEdit.text()
+        ex = self.ExpirityDateLineEdit.text()
+        Mt = self.MembershipTypeLineEdit.text()
+        ct = self.CityLineEdit.text()
+        st = self.StreetLineEdit.text()
+        pc = self.PostalCodeLineEdit.text()
+        MI = self.MemberIDLineEdit.text()
+        ss = self.StatusLineEdit.text()
+
+        cur.execute(f"update TMembership set FirstName ='{fn}',LastName ='{ln}' ,NationalCode ='{nc}' ,RegisteryDate ='{ri}'\
+            ,ExpirityDate='{ex}',MembershipType='{Mt}',City='{ct}',Street='{st}',PostalCode='{pc}',Status='{ss}' where MemberID ='{MI}'")
+        sqlite_connection.commit()
+        msg = QMessageBox(self)
+        msg.setText('Information of this member was Update Successfully')
+        msg.setWindowTitle('Edit Member')
+        msg.exec()
+        self.FirstNameLineEdit.setText('')
+        self.LastNameLineEdit.setText('')
+        self.NationalCodeLineEdit.setText('')
+        self.RegisteryDateLineEdit.setText('')
+        self.ExpirityDateLineEdit.setText('')
+        self.MembershipTypeLineEdit.setText('')
+        self.CityLineEdit.setText('')
+        self.StreetLineEdit.setText('')
+        self.PostalCodeLineEdit.setText('')
+        self.MemberIDLineEdit.setText('')
+        self.StatusLineEdit.setText('')
+        cur.close()
+###################
+#/////////////////#
+class edit_authors(QtWidgets.QDialog):
+    def __init__(self):
+        super(edit_authors,self).__init__()
+        uic.loadUi('edit_author.ui',self)
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        self.list_all_author.setColumnWidth(0,400)
+        self.list_all_author.setColumnWidth(1,200)
+        self.list_all_author.setColumnWidth(2,200)
+        self.list_all_author.setColumnWidth(3,200)
+        self.list_all_author.setColumnWidth(4,200)
+        book = cur.execute(f"select  * from TAuthor")
+        self.list_all_author.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.list_all_author.insertRow(row)
+            for column, item in enumerate(form):
+                self.list_all_author.setItem(row, column, QTableWidgetItem(str(item)))
+        cur.close
+        self.ExitPushButton.clicked.connect(self.close)
+        self.SavePushButton.clicked.connect(self.edit_author)
+        # self.refreshPushButton.clicked.connect(self.refresh_table)
+    # def refresh_table(self):
+    def edit_author(self):
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        fn = self.FirstNameLineEdit.text()
+        ln = self.LastNameLineEdit.text()
+        nc = self.NationalCodeLineEdit.text()
+        OC = self.ORCIDcodeLineEdit.text()
+        MI = self.MemberIDLineEdit.text()
+        cur.execute(f"update TAuthor  set FNAuthor ='{fn}',LNAuthor ='{ln}' ,NationalCode ='{nc}' ,ORCIDcode ='{OC}' where MemberID ='{MI}'")
+        sqlite_connection.commit()
+        msg = QMessageBox(self)
+        msg.setText('Information of this author was Update Successfully')
+        msg.setWindowTitle('Edit Author')
+        msg.exec()
+        self.FirstNameLineEdit.setText('')
+        self.LastNameLineEdit.setText('')
+        self.NationalCodeLineEdit.setText('')
+        self.ORCIDcodeLineEdit.setText('')
+        self.MemberIDLineEdit.setText('')
+        cur.close()
 ###################
 #/////////////////#
 class edit_books(QtWidgets.QDialog):
@@ -168,7 +275,7 @@ class widget(QtWidgets.QWidget):
     def Handel_Login(self):
         userName =self.UserNameLineEdit.text()
         password = self.PasswordLineEdit.text()
-        if userName == 'farshid' and password == 'admin':
+        if userName == '' and password == '':
             print('user match')
             self.window2 = main_form()
             self.close()
@@ -355,10 +462,10 @@ class Membership(QtWidgets.QDialog):
         cy = self.CityLineEdit.text()
         st = self.StreetLineEdit.text()
         pc = self.PostalCodeLineEdit.text()
-        ay = self.AlleyLineEdit.text()
+        mi = self.MemberIDLineEdit.text()
         ss = self.StatusLineEdit.text()
-        cur.execute(f"insert into TMembership (FirstName,LastName,NationalCode,RegisteryDate,ExpirityDate,MembershipType,City,Street,PostalCode,Alley,Status)\
-            values('{fn}','{ln}','{nc}','{ry}','{ed}','{mp}','{cy}','{st}','{pc}','{ay}','{ss}')")
+        cur.execute(f"insert into TMembership (FirstName,LastName,NationalCode,RegisteryDate,ExpirityDate,MembershipType,City,Street,PostalCode,MemberID,Status)\
+            values('{fn}','{ln}','{nc}','{ry}','{ed}','{mp}','{cy}','{st}','{pc}','{mi}','{ss}')")
         sqlite_connection.commit()
         msg = QMessageBox(self)
         msg.setText('The Membership was Added Successfully')
@@ -373,7 +480,7 @@ class Membership(QtWidgets.QDialog):
         self.CityLineEdit.setText('')
         self.StreetLineEdit.setText('')
         self.PostalCodeLineEdit.setText('')
-        self.AlleyLineEdit.setText('')
+        self.MemberIDLineEdit.setText('')
         self.StatusLineEdit.setText('')
         cur.close
 ####################
@@ -421,13 +528,21 @@ class main_form(QtWidgets.QMainWindow):
         self.actionList_All_Members.triggered.connect(self.show_all_member)
         self.actionList_All_Librarians.triggered.connect(self.show_all_librarian)
         self.actionEdit_Books.triggered.connect(self.show_edit_books)
-
+        self.actionEdit_Books_Author.triggered.connect(self.show_edit_author)
+        self.actionEdit_Library_Member.triggered.connect(self.show_edit_member)
+        self.actionExit.triggered.connect(self.close)
+    def show_edit_member(self):
+        self.member = edit_members()
+        self.member.setModal(True)
+        self.member.show()
+    def show_edit_author(self):
+        self.auedit = edit_authors()
+        self.auedit.setModal(True)
+        self.auedit.show()
     def show_edit_books(self):
         self.edit = edit_books()
         self.edit.setModal(True)
         self.edit.show()
-        self.actionExit.triggered.connect(self.close)
-
     def show_all_librarian(self):
         self.librarian = all_librarians()
         self.librarian.setModal(True)
@@ -437,48 +552,34 @@ class main_form(QtWidgets.QMainWindow):
         self.member = all_members()
         self.member.setModal(True)
         self.member.show()
-
-
     def show_all_author(self):
         self.author = all_authors()
         self.author.setModal(True)
         self.author.show()
-
-
     def show_all_books(self):
         self.all = all_books()
         self.all.setModal(True)
         self.all.show()
-
-
     def show_delete_books(self):
         self.db = delete_books()
         self.db.setModal(True)
         self.db.show()
-
-
     def show_borrow_books(self):
         self.bb = borrow_books()
         self.bb.setModal(True)
         self.bb.show()
-
-
     def show_Membership(self):
         self.mp = Membership()
         self.mp.setModal(True)
         self.mp.show()
-
     def show_add_librarian(self):
         self.an = add_librarian()
         self.an.setModal(True)
         self.an.show()
-
     def show_add_books_author(self):
         self.Au = add_books_author()
         self.Au.setModal(True)
         self.Au.show()
-
-
     def show_add_books(self):
         print('Add Books clicked')
         self.A =add_books()
