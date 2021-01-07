@@ -5,6 +5,69 @@ from PyQt5 import QtCore, QtGui, QtWidgets, uic
 import sqlite3
 ###################
 #/////////////////#
+class edit_books(QtWidgets.QDialog):
+    def __init__(self):
+        super(edit_books,self).__init__()
+        uic.loadUi('edit_books.ui',self)
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        self.list_all_book.setColumnWidth(0, 400)
+        self.list_all_book.setColumnWidth(1, 200)
+        self.list_all_book.setColumnWidth(2, 200)
+        self.list_all_book.setColumnWidth(3, 200)
+        self.list_all_book.setColumnWidth(4, 200)
+        self.list_all_book.setColumnWidth(5, 200)
+        self.list_all_book.setColumnWidth(6, 200)
+        self.list_all_book.setColumnWidth(7, 200)
+        self.list_all_book.setColumnWidth(8, 100)
+        self.list_all_book.setColumnWidth(9, 200)
+        self.list_all_book.setColumnWidth(10, 200)
+        self.list_all_book.setColumnWidth(11, 150)
+        self.list_all_book.setColumnWidth(12, 150)
+        book = cur.execute(f"select  * from TBooks")
+        self.list_all_book.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.list_all_book.insertRow(row)
+            for column, item in enumerate(form):
+                self.list_all_book.setItem(row, column, QTableWidgetItem(str(item)))
+        cur.close
+        self.ExitPushButton.clicked.connect(self.close)
+        self.SavePushButton.clicked.connect(self.edit_book)
+        # self.refreshPushButton.clicked.connect(self.refresh_table)
+    # def refresh_table(self):
+    def edit_book(self):
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        ti = self.TitleLineEdit.text()
+        au = self.PublisherLineEdit.text()
+        ed = self.EditionLineEdit.text()
+        bt = self.BookTypeLineEdit.text()
+        Isb = self.ISBNLineEdit.text()
+        pr = self.PriceLineEdit.text()
+        py = self.PublicationYearLineEdit.text()
+        Iy = self.InventoryLineEdit.text()
+        bd = self.BookIDLineEdit.text()
+        ss = self.statusLineEdit.text()
+        cur.execute(f"update TBooks  set Title ='{ti}',Publisher ='{au}' ,Edition ='{ed}' ,BookType ='{bt}' ,ISBN ='{Isb}'\
+            ,Price ='{pr}' ,PublicationYear ='{py}',Inventory ='{Iy}' ,BookID ='{bd}'  where Status ='{ss}'")
+        sqlite_connection.commit()
+        msg = QMessageBox(self)
+        msg.setText('Information of this Book was Update Successfully')
+        msg.setWindowTitle('Edit Books')
+        msg.exec()
+        self.TitleLineEdit.setText('')
+        self.PublisherLineEdit.setText('')
+        self.EditionLineEdit.setText('')
+        self.BookTypeLineEdit.setText('')
+        self.ISBNLineEdit.setText('')
+        self.PriceLineEdit.setText('')
+        self.PublicationYearLineEdit.setText('')
+        self.InventoryLineEdit.setText('')
+        self.BookIDLineEdit.setText('')
+        self.statusLineEdit.setText('')
+        cur.close()
+###################
+#/////////////////#
 class all_librarians (QtWidgets.QDialog):
      def __init__(self):
         super(all_librarians,self).__init__()
@@ -357,6 +420,13 @@ class main_form(QtWidgets.QMainWindow):
         self.actionList_All_Authors.triggered.connect(self.show_all_author)
         self.actionList_All_Members.triggered.connect(self.show_all_member)
         self.actionList_All_Librarians.triggered.connect(self.show_all_librarian)
+        self.actionEdit_Books.triggered.connect(self.show_edit_books)
+
+    def show_edit_books(self):
+        self.edit = edit_books()
+        self.edit.setModal(True)
+        self.edit.show()
+        self.actionExit.triggered.connect(self.close)
 
     def show_all_librarian(self):
         self.librarian = all_librarians()
@@ -367,14 +437,14 @@ class main_form(QtWidgets.QMainWindow):
         self.member = all_members()
         self.member.setModal(True)
         self.member.show()
-    
+
 
     def show_all_author(self):
         self.author = all_authors()
         self.author.setModal(True)
         self.author.show()
-    
-    
+
+
     def show_all_books(self):
         self.all = all_books()
         self.all.setModal(True)
@@ -408,13 +478,12 @@ class main_form(QtWidgets.QMainWindow):
         self.Au.setModal(True)
         self.Au.show()
 
-    
+
     def show_add_books(self):
         print('Add Books clicked')
         self.A =add_books()
         self.A.setModal(True)
         self.A.show()
-       
 ####################
 #//////////////////#
 class add_books(QtWidgets.QDialog):
@@ -455,9 +524,7 @@ class add_books(QtWidgets.QDialog):
         self.InventoryLineEdit.setText('')
         self.BookIDLineEdit.setText('')
         self.statusLineEdit.setText('')
-
-        cur.close()        
-
+        cur.close()
 #==================#
 app =QApplication([])
 w = widget()
