@@ -3,6 +3,57 @@
 from PyQt5.QtWidgets import QDialog, QApplication, QMessageBox, QTableWidget, QTableWidgetItem
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 import sqlite3
+class clock(QtWidgets.QDialog):
+    def __init__(self):
+        super(clock,self).__init__()
+        uic.loadUi('Clock.ui',self)
+###################
+#/////////////////#
+class edit_librarian(QtWidgets.QDialog):
+    def __init__(self):
+        super(edit_librarian,self).__init__()
+        uic.loadUi('EditLibrarian.ui',self)
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        self.SavePushButton.clicked.connect(self.edit_librarian)
+        self.ExitPushButton.clicked.connect(self.close)
+        self.list_all_librarian.setColumnWidth(0, 200)
+        self.list_all_librarian.setColumnWidth(1, 200)
+        self.list_all_librarian.setColumnWidth(2, 200)
+        self.list_all_librarian.setColumnWidth(3, 200)
+        self.list_all_librarian.setColumnWidth(4, 200)
+        librarian = cur.execute(f"select  * from TLibrarian")
+        self.list_all_librarian.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.list_all_librarian.insertRow(row)
+            for column, item in enumerate(form):
+                self.list_all_librarian.setItem(row, column, QTableWidgetItem(str(item)))
+        cur.close
+    def edit_librarian(self):
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        fn = self.FirstNameLineEdit.text()
+        ln = self.LastNameLineEdit.text()
+        nc = self.NationalCodeLineEdit.text()
+        pc = self.PersonnelCodeLineEdit.text()
+        ed = self.EntryDateLineEdit.text()
+        ID = self.LibrarianIDLineEdit.text()
+        cur.execute(f"update  TLibrarian set FirstName='{fn}',LastName='{ln}',NationalCode='{nc}'\
+            ,PersonnelCode='{pc}',EntryDate='{ed}'where ID ='{ID}'")
+        sqlite_connection.commit()
+        msg = QMessageBox(self)
+        msg.setText('The Librarian was updated Successfully')
+        msg.setWindowTitle('Update Librarian')
+        msg.exec()
+        self.FirstNameLineEdit.setText('')
+        self.LastNameLineEdit.setText('')
+        self.NationalCodeLineEdit.setText('')
+        self.PersonnelCodeLineEdit.setText('')
+        self.EntryDateLineEdit.setText('')
+        ID = self.LibrarianIDLineEdit.setText('')
+        cur.close
+###################
+#/////////////////#
 class edit_members(QtWidgets.QDialog):
     def __init__(self):
         super(edit_members,self).__init__()
@@ -47,8 +98,10 @@ class edit_members(QtWidgets.QDialog):
         MI = self.MemberIDLineEdit.text()
         ss = self.StatusLineEdit.text()
 
-        cur.execute(f"update TMembership set FirstName ='{fn}',LastName ='{ln}' ,NationalCode ='{nc}' ,RegisteryDate ='{ri}'\
-            ,ExpirityDate='{ex}',MembershipType='{Mt}',City='{ct}',Street='{st}',PostalCode='{pc}',Status='{ss}' where MemberID ='{MI}'")
+        cur.execute(f"update TMembership set FirstName ='{fn}',LastName ='{ln}' ,NationalCode ='{nc}'\
+            ,RegisteryDate ='{ri}'\
+            ,ExpirityDate='{ex}',MembershipType='{Mt}',City='{ct}',Street='{st}',PostalCode='{pc}'\
+            ,Status='{ss}' where MemberID ='{MI}'")
         sqlite_connection.commit()
         msg = QMessageBox(self)
         msg.setText('Information of this member was Update Successfully')
@@ -185,6 +238,7 @@ class all_librarians (QtWidgets.QDialog):
         self.list_all_librarian.setColumnWidth(2,200)
         self.list_all_librarian.setColumnWidth(3,200)
         self.list_all_librarian.setColumnWidth(4,200)
+        self.list_all_librarian.setColumnWidth(5,200)
         sqlite_connection = sqlite3.connect("BWSoftDB.db")
         cur = sqlite_connection.cursor()
         Member = cur.execute(f"select  * from TLibrarian")
@@ -266,9 +320,9 @@ class all_authors (QtWidgets.QDialog):
         cur.close
 ###################
 #/////////////////#
-class widget(QtWidgets.QWidget):
+class login(QtWidgets.QWidget):
     def __init__(self):
-        super(widget,self).__init__()
+        super(login,self).__init__()
         uic.loadUi('UserPass.ui',self)
         self.LoginPushButton.clicked.connect(self.Handel_Login)
         self.ExitPushButton.clicked.connect(self.close)
@@ -362,11 +416,11 @@ class borrow_books(QtWidgets.QDialog):
         for row, form in enumerate(cur): 
             self.ListTable.insertRow(row)
             for column, item in enumerate(form):
-                self.ListTable.setItem(row, column,QTableWidgetItem(str(item)))    
+                self.ListTable.setItem(row, column,QTableWidgetItem(str(item)))
     def filter_bd (self):
         sqlite_connection = sqlite3.connect("BWSoftDB.db")
         cur = sqlite_connection.cursor()
-        Book = cur.execute(f"select BookID,Title,ISBN,Inventory,Edition,Status from TBooks  where BookID = {self.BookIDLineEdit.text()} ")
+        Book = cur.execute(f"select BookID,Title,ISBN,Inventory,Edition,Status from TBooks  where BookID = {f} ")
         self.ListTable.setRowCount(0)
         for row, form in enumerate(cur): 
             self.ListTable.insertRow(row)
@@ -419,7 +473,6 @@ class add_librarian(QtWidgets.QDialog):
         uic.loadUi('AddLibrarian.ui',self)
         self.SavePushButton.clicked.connect(self.insert_librarian)
         self.ExitPushButton.clicked.connect(self.close)
-
     def insert_librarian(self):
         sqlite_connection = sqlite3.connect("BWSoftDB.db")
         cur = sqlite_connection.cursor()
@@ -428,8 +481,9 @@ class add_librarian(QtWidgets.QDialog):
         nc = self.NationalCodeLineEdit.text()
         pc = self.PersonnelCodeLineEdit.text()
         ed = self.EntryDateLineEdit.text()
-        cur.execute(f"insert into TLibrarian (FirstName,LastName,NationalCode,PersonnelCode,EntryDate)\
-            values('{fn}','{ln}','{nc}','{pc}','{ed}')")
+        LI = self.LibrarianIDLineEdit.text()
+        cur.execute(f"insert into TLibrarian (FirstName,LastName,NationalCode,PersonnelCode,EntryDate,ID)\
+            values('{fn}','{ln}','{nc}','{pc}','{ed}','{LI}'")
         sqlite_connection.commit()
         msg = QMessageBox(self)
         msg.setText('The Librarian was Added Successfully')
@@ -440,6 +494,7 @@ class add_librarian(QtWidgets.QDialog):
         self.NationalCodeLineEdit.setText('')
         self.PersonnelCodeLineEdit.setText('')
         self.EntryDateLineEdit.setText('')
+        self.self.LibrarianIDLineEdit.setText('')
         cur.close    
 ####################
 #//////////////////#
@@ -491,7 +546,6 @@ class add_books_author(QtWidgets.QDialog):
         uic.loadUi('AddBooksAuthor.ui',self)
         self.ExitPushButton.clicked.connect(self.close)
         self.SavePushButton.clicked.connect(self.insert_author_books)
-
     def insert_author_books(self):
         sqlite_connection = sqlite3.connect("BWSoftDB.db")
         cur = sqlite_connection.cursor()
@@ -530,7 +584,17 @@ class main_form(QtWidgets.QMainWindow):
         self.actionEdit_Books.triggered.connect(self.show_edit_books)
         self.actionEdit_Books_Author.triggered.connect(self.show_edit_author)
         self.actionEdit_Library_Member.triggered.connect(self.show_edit_member)
+        self.actionEdit_Librarian.triggered.connect(self.show_edit_librarian)
+        self.actionClock.triggered.connect(self.show_clock)
         self.actionExit.triggered.connect(self.close)
+    def show_clock(self):
+        self.ck = clock()
+        self.ck.setModal(True)
+        self.ck.show()
+    def show_edit_librarian(self):
+        self.ketabdar = edit_librarian()
+        self.ketabdar.setModal(True)
+        self.ketabdar.show()
     def show_edit_member(self):
         self.member = edit_members()
         self.member.setModal(True)
@@ -593,8 +657,6 @@ class add_books(QtWidgets.QDialog):
         uic.loadUi('add_books.ui',self)
         self.ExitPushButton.clicked.connect(self.close)
         self.SavePushButton.clicked.connect(self.insert_records)
-
-
     def insert_records(self):
         sqlite_connection = sqlite3.connect("BWSoftDB.db")
         cur = sqlite_connection.cursor()
@@ -607,9 +669,10 @@ class add_books(QtWidgets.QDialog):
         py = self.PublicationYearLineEdit.text()
         Iy = self.InventoryLineEdit.text()
         bd = self.BookIDLineEdit.text()
+        oc = self.OrcidCodeLineEdit.text()
         ss = self.statusLineEdit.text()
-        cur.execute(f"insert into TBooks (Title,Publisher,Edition,BookType,ISBN,Price,PublicationYear,Inventory,BookID,Status)\
-            values('{ti}','{au}','{ed}','{bt}','{Isb}','{pr}','{py}','{Iy}','{bd}','{ss}')")
+        cur.execute(f"insert into TBooks (Title,Publisher,Edition,BookType,ISBN,Price,PublicationYear,Inventory,BookID,ORCIDcode,Status)\
+            values('{ti}','{au}','{ed}','{bt}','{Isb}','{pr}','{py}','{Iy}','{bd}','{oc}','{ss}')")
         sqlite_connection.commit()
         msg = QMessageBox(self)
         msg.setText('The Book was Added Successfully')
@@ -628,6 +691,6 @@ class add_books(QtWidgets.QDialog):
         cur.close()
 #==================#
 app =QApplication([])
-w = widget()
+w = login()
 w.show()
 app.exec()
