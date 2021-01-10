@@ -3,14 +3,15 @@
 from PyQt5.QtWidgets import QDialog, QApplication, QMessageBox, QTableWidget, QTableWidgetItem
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 import sqlite3
-###################
-######Clock########
+########################################################################################################
+################################################Clock###################################################
+#This is an idea and not copmlate
 class clock(QtWidgets.QDialog):
     def __init__(self):
         super(clock,self).__init__()
         uic.loadUi('Clock.ui',self)
-###################
-###EditLibrarianS###
+########################################################################################################
+#############################################EditLibrarianS#############################################
 class edit_librarian(QtWidgets.QDialog):
     def __init__(self):
         super(edit_librarian,self).__init__()
@@ -19,11 +20,12 @@ class edit_librarian(QtWidgets.QDialog):
         cur = sqlite_connection.cursor()
         self.SavePushButton.clicked.connect(self.edit_librarian)
         self.ExitPushButton.clicked.connect(self.close)
-        self.list_all_librarian.setColumnWidth(0, 200)
-        self.list_all_librarian.setColumnWidth(1, 200)
-        self.list_all_librarian.setColumnWidth(2, 200)
-        self.list_all_librarian.setColumnWidth(3, 200)
-        self.list_all_librarian.setColumnWidth(4, 200)
+        self.list_all_librarian.setColumnWidth(0,200)
+        self.list_all_librarian.setColumnWidth(1,200)
+        self.list_all_librarian.setColumnWidth(2,200)
+        self.list_all_librarian.setColumnWidth(3,200)
+        self.list_all_librarian.setColumnWidth(4,200)
+        self.list_all_librarian.setColumnWidth(5,200)
         librarian = cur.execute(f"select  * from TLibrarian")
         self.list_all_librarian.setRowCount(0)
         for row, form in enumerate(cur):
@@ -54,8 +56,8 @@ class edit_librarian(QtWidgets.QDialog):
         self.EntryDateLineEdit.setText('')
         ID = self.LibrarianIDLineEdit.setText('')
         cur.close
-###################
-####EditMembers####
+########################################################################################################
+#############################################EditMembers################################################
 class edit_members(QtWidgets.QDialog):
     def __init__(self):
         super(edit_members,self).__init__()
@@ -99,7 +101,6 @@ class edit_members(QtWidgets.QDialog):
         pc = self.PostalCodeLineEdit.text()
         MI = self.MemberIDLineEdit.text()
         ss = self.StatusLineEdit.text()
-
         cur.execute(f"update TMembership set FirstName ='{fn}',LastName ='{ln}' ,NationalCode ='{nc}'\
             ,RegisteryDate ='{ri}'\
             ,ExpirityDate='{ex}',MembershipType='{Mt}',City='{ct}',Street='{st}',PostalCode='{pc}'\
@@ -121,8 +122,8 @@ class edit_members(QtWidgets.QDialog):
         self.MemberIDLineEdit.setText('')
         self.StatusLineEdit.setText('')
         cur.close()
-###################
-####EditAuthor#####
+########################################################################################################
+##############################################EditAuthor################################################
 class edit_authors(QtWidgets.QDialog):
     def __init__(self):
         super(edit_authors,self).__init__()
@@ -152,8 +153,8 @@ class edit_authors(QtWidgets.QDialog):
         ln = self.LastNameLineEdit.text()
         nc = self.NationalCodeLineEdit.text()
         OC = self.ORCIDcodeLineEdit.text()
-        MI = self.MemberIDLineEdit.text()
-        cur.execute(f"update TAuthor  set FNAuthor ='{fn}',LNAuthor ='{ln}' ,NationalCode ='{nc}' ,ORCIDcode ='{OC}' where MemberID ='{MI}'")
+        AI = self.MemberIDLineEdit.text()
+        cur.execute(f"update TAuthor  set FNAuthor ='{fn}',LNAuthor ='{ln}' ,NationalCode ='{nc}' ,ORCIDcode ='{OC}' where AuthorID ='{AI}'")
         sqlite_connection.commit()
         msg = QMessageBox(self)
         msg.setText('Information of this author was Update Successfully')
@@ -165,8 +166,8 @@ class edit_authors(QtWidgets.QDialog):
         self.ORCIDcodeLineEdit.setText('')
         self.MemberIDLineEdit.setText('')
         cur.close()
-###################
-#####EditBooks#####
+########################################################################################################
+###############################################EditBooks################################################
 class edit_books(QtWidgets.QDialog):
     def __init__(self):
         super(edit_books,self).__init__()
@@ -228,8 +229,8 @@ class edit_books(QtWidgets.QDialog):
         self.BookIDLineEdit.setText('')
         self.statusLineEdit.setText('')
         cur.close()
-###################
-###AllLibrarians###
+########################################################################################################
+##############################################AllLibrarians#############################################
 class all_librarians (QtWidgets.QDialog):
      def __init__(self):
         super(all_librarians,self).__init__()
@@ -250,8 +251,8 @@ class all_librarians (QtWidgets.QDialog):
             for column, item in enumerate(form):
                 self.list_all_librarian.setItem(row, column,QTableWidgetItem(str(item)))
         cur.close
-###################
-####AllMember######
+########################################################################################################
+#############################################AllMember##################################################
 class all_members (QtWidgets.QDialog):
      def __init__(self):
         super(all_members,self).__init__()
@@ -278,8 +279,8 @@ class all_members (QtWidgets.QDialog):
             for column, item in enumerate(form):
                 self.list_all_member.setItem(row, column,QTableWidgetItem(str(item)))
         cur.close
-###################
-#####AllAuthors####
+########################################################################################################
+#############################################AllAuthors#################################################
 class all_authors (QtWidgets.QDialog):
      def __init__(self):
         super(all_authors,self).__init__()
@@ -299,29 +300,8 @@ class all_authors (QtWidgets.QDialog):
             for column, item in enumerate(form):
                 self.list_all_author.setItem(row, column,QTableWidgetItem(str(item)))
         cur.close
-###################
-#####AllAuthors#####
-class all_authors (QtWidgets.QDialog):
-     def __init__(self):
-        super(all_authors,self).__init__()
-        uic.loadUi('all_author.ui',self)
-        self.ExitPushButton.clicked.connect(self.close)
-        self.list_all_author.setColumnWidth(0,300)
-        self.list_all_author.setColumnWidth(1,400)
-        self.list_all_author.setColumnWidth(2,200)
-        self.list_all_author.setColumnWidth(3,200)
-        self.list_all_author.setColumnWidth(4,100)
-        sqlite_connection = sqlite3.connect("BWSoftDB.db")
-        cur = sqlite_connection.cursor()
-        Member = cur.execute(f"select  * from TAuthor")
-        self.list_all_author.setRowCount(0)
-        for row, form in enumerate(cur):
-            self.list_all_author.insertRow(row)
-            for column, item in enumerate(form):
-                self.list_all_author.setItem(row, column,QTableWidgetItem(str(item)))
-        cur.close
-###################
-######Login########
+########################################################################################################
+#############################################Login######################################################
 class login(QtWidgets.QWidget):
     def __init__(self):
         super(login,self).__init__()
@@ -340,8 +320,8 @@ class login(QtWidgets.QWidget):
             self.Textlabel.setText('Username or password is incorrect...')
             self.UserNameLineEdit.setText('')
             self.PasswordLineEdit.setText('')
-####################
-######AllBooks######
+########################################################################################################
+#############################################AllBooks###################################################
 class all_books(QtWidgets.QDialog):
     def __init__(self):
         super(all_books,self).__init__()
@@ -369,8 +349,8 @@ class all_books(QtWidgets.QDialog):
             for column, item in enumerate(form):
                 self.list_all_book.setItem(row, column,QTableWidgetItem(str(item)))
         cur.close
-####################
-##DeleteLibrarians##
+########################################################################################################
+#############################################DeleteLibrarians###########################################
 class delete_librarian(QtWidgets.QDialog):
     def __init__(self):
         super(delete_librarian,self).__init__()
@@ -405,8 +385,8 @@ class delete_librarian(QtWidgets.QDialog):
         msg.exec()
         self.LibrarianIDLineEdit.setText('')
         cur.close
-####################
-####DeleteMembers####
+########################################################################################################
+#############################################DeleteMembers##############################################
 class delete_member(QtWidgets.QDialog):
     def __init__(self):
         super(delete_member,self).__init__()
@@ -447,8 +427,8 @@ class delete_member(QtWidgets.QDialog):
         msg.exec()
         self.MemberIDLineEdit.setText('')
         cur.close
-####################
-####DeleteAuthor####
+########################################################################################################
+#############################################DeleteAuthor###############################################
 class delete_author(QtWidgets.QDialog):
     def __init__(self):
         super(delete_author,self).__init__()
@@ -481,8 +461,8 @@ class delete_author(QtWidgets.QDialog):
         msg.exec()
         self.BookIDLineEdit.setText('')
         cur.close
-####################
-####DeleteBooks#####
+########################################################################################################
+#############################################DeleteBooks################################################
 class delete_books(QtWidgets.QDialog):
     def __init__(self):
         super(delete_books,self).__init__()
@@ -523,16 +503,17 @@ class delete_books(QtWidgets.QDialog):
         msg.exec()
         self.BookIDLineEdit.setText('')
         cur.close
-####################
-#####BorrowBooks####
+########################################################################################################
+#############################################BorrowBooks################################################
 class borrow_books(QtWidgets.QDialog):
     def __init__(self):
         super(borrow_books,self).__init__()
         uic.loadUi('borrow.ui',self)
-        # self.BookIDLineEdit.textChanged.connect(self.filter_bd)
-        # self.ISBNLineEdit.textChanged.connect(self.filter_IN)
-        # self.MemberIDLineEdit.textChanged.connect(self.filter_MSh)
+        self.FindPushButton.clicked.connect(self.filter_bookid)
+        self.FindPushButton.clicked.connect(self.filter_memberID)
+        self.FindPushButton.clicked.connect(self.filter_status)
         self.BorrowPushButton.clicked.connect(self.Borrow)
+        self.CheckBorrowPushButton.clicked.connect(self.BorrowChek)
         self.ExitPushButton.clicked.connect(self.close)
         self.TableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
         self.TableWidget.setColumnWidth(0,70)
@@ -571,67 +552,104 @@ class borrow_books(QtWidgets.QDialog):
         Book = cur.execute(f"select * from TBorrowBooks")
         self.BorrowListTable.setEditTriggers(QTableWidget.NoEditTriggers)
         self.BorrowListTable.setColumnWidth(0,100)
-        self.BorrowListTable.setColumnWidth(1,200)
+        self.BorrowListTable.setColumnWidth(1,300)
         self.BorrowListTable.setColumnWidth(2,200)
-        self.BorrowListTable.setColumnWidth(3,110)
+        self.BorrowListTable.setColumnWidth(3,200)
         self.BorrowListTable.setRowCount(0)
         for row, form in enumerate(cur):
             self.BorrowListTable.insertRow(row)
             for column, item in enumerate(form):
                 self.BorrowListTable.setItem(row, column, QTableWidgetItem(str(item)))
-    # def filter_bd (self):
-    #     sqlite_connection = sqlite3.connect("BWSoftDB.db")
-    #     cur = sqlite_connection.cursor()
-    #     Book = cur.execute(f"select BookID,Title,ISBN,Inventory,Edition,Status \
-    #         from TBooks  where BookID = {self.BookIDLineEdit.text()}")
-    #     self.ListTable.setRowCount(0)
-    #     for row, form in enumerate(cur):
-    #         self.ListTable.insertRow(row)
-    #         for column, item in enumerate(form):
-    #             self.ListTable.setItem(row, column,QTableWidgetItem(str(item)))
-    #     cur.close
-    # def filter_IN (self):
-    #     sqlite_connection = sqlite3.connect("BWSoftDB.db")
-    #     cur = sqlite_connection.cursor()
-    #     Book = cur.execute(f"select BookID,Title,ISBN,Inventory,Edition,Status\
-    #         from TBooks where ISBN = {self.ISBNLineEdit.text()}")
-    #     self.ListTable.setRowCount(0)
-    #     for row, form in enumerate(cur):
-    #         self.ListTable.insertRow(row)
-    #         for column, item in enumerate(form):
-    #             self.ListTable.setItem(row, column,QTableWidgetItem(str(item)))
-    #     cur.close
-    # def filter_MSh (self):
-    #     sqlite_connection = sqlite3.connect("BWSoftDB.db")
-    #     cur = sqlite_connection.cursor()
-    #     cur = sqlite_connection.cursor()
-    #     member = cur.execute(f"select MemberID,LastName,NationalCode,RegisteryDate,\
-    #         ExpirityDate,MembershipType,Status from TMembership \
-    #         where MemberID = {self.MemberIDLineEdit.text()}")
-    #     self.TableWidget.setRowCount(0)
-    #     for row, form in enumerate(cur):
-    #         self.TableWidget.insertRow(row)
-    #         for column, item in enumerate(form):
-    #             self.TableWidget.setItem(row, column,QTableWidgetItem(str(item)))
-    #     cur.close
+    def filter_bookid (self):
+        f =self.BookIDLineEdit.text()
+        if f == '':
+            return
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        Book = cur.execute(f"select BookID,Title,ISBN,Inventory,Edition,Status\
+            from TBooks  where BookID = {self.BookIDLineEdit.text()}")
+        self.ListTable.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.ListTable.insertRow(row)
+            for column, item in enumerate(form):
+                self.ListTable.setItem(row, column,QTableWidgetItem(str(item)))
+        cur.close
+    def filter_memberID (self):
+        f = self.MemberIDLineEdit.text()
+        if f == '':
+            return
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        Book = cur.execute(f"select MemberID,LastName,NationalCode,RegisteryDate,ExpirityDate,MembershipType,Status\
+            from TMembership where MemberID = {self.MemberIDLineEdit.text()}")
+        self.TableWidget.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.TableWidget.insertRow(row)
+            for column, item in enumerate(form):
+                self.TableWidget.setItem(row, column,QTableWidgetItem(str(item)))
+        cur.close
+    def filter_status (self):
+        f = self.BookStatusLineEdit.text()
+        if f == '':
+            return
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        cur = sqlite_connection.cursor()
+        member = cur.execute(f"select * from TBorrowBooks \
+            where Status = {self.BookStatusLineEdit.text()}")
+        self.BorrowListTable.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.BorrowListTable.insertRow(row)
+            for column, item in enumerate(form):
+                self.BorrowListTable.setItem(row, column,QTableWidgetItem(str(item)))
+        cur.close
     def Borrow(self):
-            sqlite_connection = sqlite3.connect("BWSoftDB.db")
-            cur = sqlite_connection.cursor()
-            BI = self.BookIDLineEdit.text()
-            NC = self.NatioNAaCodeLineEdit.text()
-            MI = self.MemberIDLineEdit.text()
-            SS = self.BookStatusLineEdit.text()
-            Borrow = cur.execute(f"insert into TBorrowBooks (BookID,NationalCode,MembershipID,Status)\
-                 values('{BI}','{NC}','{MI}','{SS}')")
-            sqlite_connection.commit()
-            # Borrow = cur.execute(f"select count(*) from TBorrowBooks where BookID = 1 and Status = 1")
-            msg = QMessageBox(self)
-            msg.setText('This Book Borrowed')
-            msg.setWindowTitle('BorrowBook')
-            msg.exec()
-            cur.close()
-####################
-#####AddMember######
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        BI = self.BookIDLineEdit.text()
+        NC = self.NatioNAaCodeLineEdit.text()
+        MI = self.MemberIDLineEdit.text()
+        SS = self.BookStatusLineEdit.text()
+        Borrow = cur.execute(f"insert into TBorrowBooks (BookID,NationalCode,MembershipID,Status)\
+             values('{BI}','{NC}','{MI}','{SS}')")
+        sqlite_connection.commit()
+        msg = QMessageBox(self)
+        msg.setText('This Book Borrowed')
+        msg.setWindowTitle('BorrowBook')
+        msg.exec()
+        cur.close()
+    def BorrowChek (self):
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        Borrow = cur.execute( f"select count(*) from TBorrowBooks where BookID = 1 and Status =0")
+        sqlite_connection.commit()
+        msg = QMessageBox(self)
+        msg.setText('This Book Can be Borrowed')
+        msg.setWindowTitle('BorrowBook')
+        msg.exec()
+        cur.close()
+########################################################################################################
+#############################################ReportBorrowBooks################################################
+class Report(QtWidgets.QDialog):
+    def __init__(self):
+        super(Report, self).__init__()
+        uic.loadUi('ReportBorrowBook.ui',self)
+        self.ExitPushButton.clicked.connect(self.close)
+        self.BorrowListTable.setColumnWidth(0,300)
+        self.BorrowListTable.setColumnWidth(1,400)
+        self.BorrowListTable.setColumnWidth(2,200)
+        self.BorrowListTable.setColumnWidth(3,200)
+        sqlite_connection = sqlite3.connect("BWSoftDB.db")
+        cur = sqlite_connection.cursor()
+        Borrow = cur.execute(f"select  * from TBorrowBooks")
+        self.BorrowListTable.setRowCount(0)
+        for row, form in enumerate(cur):
+            self.BorrowListTable.insertRow(row)
+            for column, item in enumerate(form):
+                self.BorrowListTable.setItem(row, column, QTableWidgetItem(str(item)))
+        cur.close
+########################################################################################################
+#############################################AddMember##################################################
 class add_librarian(QtWidgets.QDialog):
     def __init__(self):
         super(add_librarian,self).__init__()
@@ -661,8 +679,8 @@ class add_librarian(QtWidgets.QDialog):
         self.EntryDateLineEdit.setText('')
         self.LibrarianIDLineEdit.setText('')
         cur.close
-####################
-#####AddMember######
+########################################################################################################
+#############################################AddMember##################################################
 class Membership(QtWidgets.QDialog):
     def __init__(self):
         super(Membership,self).__init__()
@@ -702,8 +720,8 @@ class Membership(QtWidgets.QDialog):
         self.MemberIDLineEdit.setText('')
         self.StatusLineEdit.setText('')
         cur.close
-####################
-###AddBooksAuthor###
+########################################################################################################
+#############################################AddBooksAuthor#############################################
 class add_books_author(QtWidgets.QDialog):
     def __init__(self):
         super(add_books_author,self).__init__()
@@ -729,8 +747,8 @@ class add_books_author(QtWidgets.QDialog):
         self.NationalCodeineEdit.setText('')
         self.ORCIDLineEdit.setText('')
         cur.close()
-####################
-######MainForm######
+########################################################################################################
+#############################################MainForm###################################################
 class main_form(QtWidgets.QMainWindow):
     def __init__(self):
         super(main_form,self).__init__()
@@ -752,8 +770,13 @@ class main_form(QtWidgets.QMainWindow):
         self.actionAuthorDelete.triggered.connect(self.show_author_delete)
         self.actionMemberDelete.triggered.connect(self.show_member_delete)
         self.actionLibrarianDelete.triggered.connect(self.show_librarian_delete)
+        self.ActionReport.triggered.connect(self.show_report_borrow)
         self.actionClock.triggered.connect(self.show_clock)
         self.actionExit.triggered.connect(self.close)
+    def show_report_borrow(self):
+        self.rb = Report()
+        self.rb.setModal(True)
+        self.rb.show()
     def show_clock(self):
         self.ck = clock()
         self.ck.setModal(True)
@@ -828,8 +851,8 @@ class main_form(QtWidgets.QMainWindow):
         self.A =add_books()
         self.A.setModal(True)
         self.A.show()
-####################
-#####AddBooks#######
+########################################################################################################
+#############################################AddBooks###################################################
 class add_books(QtWidgets.QDialog):
     def __init__(self):
         super(add_books,self).__init__()
